@@ -4,7 +4,7 @@ import { exec } from 'child_process';
 import os from 'os';
 
 const app = express();
-const port = 8081;
+const port = 3000;
 
 app.use(cors());
 
@@ -13,9 +13,11 @@ app.get('/api/ports', (req, res) => {
 
     const command = plataform === 'linux' ? 'ss -tulpn' : 'netstat -ano';
 
-    exec(command, (stdout, error) =>{
-        if(error) return res.status(500).json({ error: 'error' });
-        res.json({ output: stdout })
+    exec(command, (error, stdout) =>{
+        if(error) { 
+            return res.status(500).json({ error: 'error' });
+        }   
+        res.json({ output: stdout });
     })
 })
 
