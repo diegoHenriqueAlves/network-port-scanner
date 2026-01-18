@@ -1,12 +1,27 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { Component, OnInit, signal } from '@angular/core';
+import { PortService } from './services/port.service';
+import type { portsProps } from './type/port-type'
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
-export class App {
-  protected readonly title = signal('port-scanner-frontend');
+
+export class AppComponent implements OnInit {
+  ports: portsProps[] = [];
+
+  constructor(private portSecvice: PortService) {}
+
+  ngOnInit() {
+    this.portSecvice.getPorts().subscribe({
+      next: (data) => {
+        this.ports = data;
+      },
+      error: (err) => console.error(err)
+    });
+  }
 }

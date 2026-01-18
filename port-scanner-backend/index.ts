@@ -1,26 +1,21 @@
 import express from 'express';
 import cors from 'cors';
-import { exec } from 'child_process';
-import os from 'os';
+import { PortsUsecase } from './src/usecase/ports.usecase.js';
+import { PortController } from './src/controller/ports.controller.js';
 
 const app = express();
 const port = 3000;
 
 app.use(cors());
 
-app.get('/api/ports', (req, res) => {
-    const plataform = os.platform();
+const portsUseCase = new PortsUsecase();
+const portsController = new PortController(portsUseCase);
 
-    const command = plataform === 'linux' ? 'ss -tulpn' : 'netstat -ano';
+// Rota
+app.get('/api/doors', (req, res) => {
+    portsController.handle(req, res);
+});
 
-    exec(command, (error, stdout) =>{
-        if(error) { 
-            return res.status(500).json({ error: 'error' });
-        }   
-        res.json({ output: stdout });
-    })
-})
-
-app.listen(port, () =>{
-    console.log(`🚀 Servidor Mitnick rodando em http://localhost:${port}`)
-})
+app.listen(port, () => {
+    console.log(`🚀 Backend rodando em http://localhost:${port}`);
+});
